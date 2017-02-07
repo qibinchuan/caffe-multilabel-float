@@ -1,0 +1,23 @@
+http://blog.csdn.net/hubin232/article/details/50960201
+
+
+  caffe 本身并不支持 多类标的输入， 该框架主要用于解决图片分类的问题，而目前，两个重要的问题需要多标签的输入：多任务学习（multi-task）和多标签分类（multi-label），本文针对这两个问题，实现了多标签的输入
+ 
+         目前，网上流行的多标签输入方法主要有以下四种：
+         1. 最简单，使用mxnet，它本身支持了多标签分类的问题，因此也自带了多标签的输入
+         2. 用HDF5 + Slice Layer的方法完成，这种方法实现上没有什么难度，但是当数据量很大时，HDF5的存储方式会产生数十倍于图片的硬盘消耗，而且生成的过程也非常缓慢，本人一开始就主要使用这种方法，往往事倍功半
+         3. 用两个data的输入（两个LMDB），一个只输出图片，一个只输出标签，这种方法相对前面两种要难一些，不过应该效果也不错
+         4. 直接修改caffe的网络使其满足多标签的输入，为了方便以后的实验，本人实现了这种方法
+ 
+         方法描述：注意到caffe的大多数数据转换都是从./.build_release/tools/convert_imageset 这种方法开始的，因此，从convert_iamgeset开始入手应该是正确的选择，通过跟踪数据的输入，依次修改了convert_imageset.cpp、io.hpp、 io.cpp、data_layers.hpp、caffe.proto、data_layer.cpp、image_data_layer.cpp、memory_data_layer.cpp等。因为本次是工程需要，因此我直接在py-faster-rcnn的caffe上进行修改
+ 
+         主要方法：(该博客上所有图片，左边是修改后的，右边是原有的)
+
+
+
+======================
+
+/home/my_test_dir/picture-foo1.jpg 0 0 1 后面的0 0 1是代表label 0 label 0 label 1吗，另外按照你的代码修改后一定要每个img path后面需要制定一样数量的label
+img input
+multilabel
+suport float multilabel
